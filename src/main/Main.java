@@ -27,18 +27,19 @@ import com.jogamp.opengl.util.texture.TextureCoords;
 import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
 
+import gamelib.Character;
 import gamelib.ClickBuffer;
+import gamelib.Dimension2f;
 import gamelib.Gait;
 import gamelib.KeyBuffer;
 import gamelib.Motion4D;
+import gamelib.Pulse;
 import gamelib.ScreenText;
 import gamelib.Sprite;
+import gamelib.TileMap;
 
 public class Main implements GLEventListener {
-	
-	private float angle, translatex;
-	private Texture texture;
-	private float textureTop, textureBottom, textureLeft, textureRight;
+
 	private TextRenderer tr;
 	private String msg = "Hello world";
 	private Sprite man;
@@ -46,8 +47,11 @@ public class Main implements GLEventListener {
 	private KeyBuffer kb;
 	private ClickBuffer cb;
 	private Motion4D m4d;
-	
 	private Gait gaitRight, gaitLeft, gaitTop, gaitBottom;
+	private Sprite grass;
+	private TileMap tm;
+	private gamelib.Character character;
+	private Dimension2f d2;
 	
 	private void start() {
 		final GLProfile profile = GLProfile.get(GLProfile.GL2);
@@ -98,14 +102,19 @@ public class Main implements GLEventListener {
 		gl.glLoadIdentity();
 		
 //		gaitRight.getSprite().draw(gl, translatex, 0.0f, 0.0f, 0.2f);
-		Gait.counter++;
+//		Gait.counter++;
+		
+		tm.draw(gl, 5, 5, d2.getX(), d2.getY());
 		
 		KeyEvent ke = kb.get();
-		Sprite sp;
-		sp = m4d.getSprite(ke);
-		if(sp != null) {
-			sp.draw(gl, 0, 0, 0, 0.2f);
-		}
+		d2 = character.move(gl, ke, 0.2f);
+		
+//		Sprite sp;
+//		sp = m4d.getSprite(ke);
+//		if(sp != null) {
+//			sp.draw(gl, 0, 0, 0, 0.2f);
+//		}
+		
 		st.setText(ke == null ? null : ke.paramString());
 		
 		st.draw(drawable, 0, 0);
@@ -114,11 +123,8 @@ public class Main implements GLEventListener {
 //		st.setText(me == null ? null : me.paramString());
 //		st.draw(drawable, 0, 20);
 		
-		translatex += 0.01f;
-		if(translatex > 1.0f) {
-			translatex = -1.0f;
-		}
-		angle += 0.2f;
+		Pulse.increment();
+
 	}
 
 	@Override
@@ -131,9 +137,6 @@ public class Main implements GLEventListener {
 	public void init(GLAutoDrawable drawable) {
 		// TODO Auto-generated method stub
 		final GL2 gl = drawable.getGL().getGL2();
-		angle = 0.0f;
-		translatex = 0.0f;
-//		System.out.println("Init");
 		
 		tr = new TextRenderer(new Font("SansSerif", Font.PLAIN, 14));
 		Rectangle2D bounds = tr.getBounds(msg + "0000.0");
@@ -164,6 +167,12 @@ public class Main implements GLEventListener {
 		gaitRight.add(new Sprite(Main.class.getClassLoader().getResource("main/gait-right-1.gif"), false));
 		
 		m4d = new Motion4D(gaitTop, gaitRight, gaitBottom, gaitLeft);
+		
+		grass = new Sprite(Main.class.getClassLoader().getResource("main/GrassCenter.png"), false);
+		tm = new TileMap(grass);
+		
+		character = new Character(m4d, 0, 0);
+		d2 = new Dimension2f(0, 0);
 	}
 
 	@Override

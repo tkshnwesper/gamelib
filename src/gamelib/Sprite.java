@@ -37,6 +37,10 @@ public class Sprite {
 		
 	}
 	
+	public float getAspectRatio() {
+		return aspectRatio;
+	}
+	
 	public Sprite(URL path, boolean enableMipMap) {
 		this(new File(path.toString().split(":/", 2)[1]), enableMipMap);
 	}

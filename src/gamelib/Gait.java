@@ -7,7 +7,7 @@ public class Gait {
 	
 	private LinkedList<Sprite> frames;
 	private int frameSkip;
-	public static int counter = 0;
+//	public static int counter = 1;
 	private Sprite currentSprite;
 	private ListIterator<Sprite> li;
 	private Sprite stationary = null;
@@ -35,7 +35,7 @@ public class Gait {
 	}
 	
 	public Sprite getSprite() {
-		if(counter % frameSkip == 0) {
+		if(Pulse.getCount() % frameSkip == 0) {
 			if(li.hasNext()) {
 				currentSprite = li.next();
 			}
